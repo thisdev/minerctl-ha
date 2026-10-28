@@ -73,4 +73,5 @@ abzuschalten? Bitte ein [Issue oder einen Pull Request](https://github.com/thisd
 Es wird **keine Haftung** übernommen – weder für Schäden an Hardware (Hashboards, Netzteil, Miner),
 noch für Datenverlust, entgangene Erträge, erhöhte Stromkosten oder sonstige Folgeschäden. Du bist
 selbst dafür verantwortlich, Kühlung, Temperaturen und Leistungsgrenzen im sicheren Bereich zu halten.
-Kein offizielles Projekt von Braiins oder Bitmain. Bereitstellung „wie besehen" ohne jede Gewährleistung.
+Die Software wird ohne jede Gewährleistung und ohne Anspruch auf Funktion oder Support bereitgestellt.
+Kein offizielles Projekt von Braiins (Braiins OS) oder Bitmain (Antminer).
