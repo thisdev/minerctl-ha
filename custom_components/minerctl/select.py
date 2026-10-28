@@ -25,10 +25,19 @@ class PresetSelect(ConfigEntity, SelectEntity):
         self._labels = {p["label"]: k for k, p in co.presets.items()}
         self._attr_options = list(self._labels) + [CUSTOM]
 
+    def _label_for(self, watts) -> str:
+        for p in self.coordinator.presets.values():
+            if p["power"] == watts:
+                return p["label"]
+        return CUSTOM
+
     @property
     def current_option(self):
-        key = self.coordinator.current_preset()
-        return self.coordinator.presets[key]["label"] if key else CUSTOM
+        co = self.coordinator
+        if co.pending_power is not None:          # noch nicht übernommener Zielwert
+            return self._label_for(co.pending_power)
+        key = co.current_preset()
+        return co.presets[key]["label"] if key else CUSTOM
 
     @property
     def extra_state_attributes(self):
@@ -37,5 +46,6 @@ class PresetSelect(ConfigEntity, SelectEntity):
     async def async_select_option(self, option: str) -> None:
         if option == CUSTOM:
             raise HomeAssistantError("'Eigene Einstellung' entsteht durch manuelle Änderungen und ist nicht wählbar.")
-        preset = self.coordinator.presets[self._labels[option]]
-        await self.coordinator.run_change(f"Preset {option}", lambda: self.coordinator.client.apply_preset(preset))
+        # Startet den Miner NICHT neu – setzt nur den Zielwert. Übernahme über den Button "Übernehmen".
+        self.coordinator.pending_power = self.coordinator.presets[self._labels[option]]["power"]
+        self.coordinator.async_update_listeners()

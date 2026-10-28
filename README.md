@@ -24,13 +24,20 @@ Status über die Miner-API (Port 4028), Änderungen über SSH (Port 22).
 | Board 6/7/8 Hashrate, Chiptemperatur | Sensor | je Board |
 | Leistung | Sensor | geschätzter Verbrauch laut Miner (ohne Netzteilverluste) |
 | Effizienz | Sensor | J/TH |
-| Leistungsgrenze | Schieberegler | Watt setzen; Grenzen passen sich automatisch an die Zahl laufender Boards an (~130–470 W je Board) |
-| Preset | Auswahl | Eco, Medium, Maximum (reine Leistungsstufen) |
+| Leistungsgrenze | Schieberegler | Ziel-Watt setzen (noch ohne Neustart); Grenzen passen sich automatisch an die Zahl laufender Boards an (~130–470 W je Board) |
+| Preset | Auswahl | Eco, Medium, Maximum – setzt den Ziel-Watt-Wert (noch ohne Neustart) |
+| Übernehmen | Taste | wendet den gesetzten Zielwert an – löst den einen Neustart aus |
+| Zielwert verwerfen | Taste | verwirft den Zielwert ohne Änderung am Miner (kein Neustart) |
 | Mining | Schalter | bosminer stoppen/starten |
 | Mining neu starten | Taste | bosminer neu starten |
 | Original-Config wiederherstellen | Taste | standardmäßig deaktiviert |
 
 Diagnose: Lüfter, Board-Temperatur, Pool, aktive Leistungsgrenze (inkl. Drosselung durch Dynamic Power Scaling).
+
+**Änderungen übernehmen:** Slider und Preset setzen nur einen **Zielwert** – der Miner läuft unverändert
+weiter. Erst **„Übernehmen"** schreibt die Änderung und startet bosminer einmal neu. So lösen ein
+Verrutschen am Slider oder ein Fehlklick keinen unnötigen Neustart aus; **„Zielwert verwerfen"** setzt
+den Zielwert ohne Änderung zurück.
 
 ## Modi (Presets)
 Reine Leistungsstufen – Autotuning bleibt immer an, alle Boards laufen (siehe „Boards abschalten").

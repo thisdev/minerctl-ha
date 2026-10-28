@@ -54,14 +54,19 @@ class PowerLimit(ConfigEntity, NumberEntity):
 
     @property
     def native_value(self):
-        return self.cfg.get("power_limit")
+        # Zeigt den gesetzten Zielwert, solange er noch nicht übernommen wurde, sonst den aktiven.
+        p = self.coordinator.pending_power
+        return p if p is not None else self.cfg.get("power_limit")
 
     @property
     def extra_state_attributes(self):
-        return {"erkannte_boards": self._boards()}
+        return {
+            "erkannte_boards": self._boards(),
+            "aktiv_w": self.cfg.get("power_limit"),
+            "uebernehmen_ausstehend": self.coordinator.pending_active() is not None,
+        }
 
     async def async_set_native_value(self, value: float) -> None:
-        watts = int(round(value))
-        if watts == self.cfg.get("power_limit") and self.cfg.get("autotuning"):
-            return
-        await self.coordinator.run_change(f"Leistung {watts} W", lambda: self.coordinator.client.set_power(watts))
+        # Startet den Miner NICHT neu – setzt nur den Zielwert. Übernahme über den Button "Übernehmen".
+        self.coordinator.pending_power = int(round(value))
+        self.coordinator.async_update_listeners()

@@ -29,6 +29,7 @@ class MinerCoordinator(DataUpdateCoordinator[Dict[str, Any]]):
         self._cfg: Optional[dict] = None
         self._cfg_time = 0.0
         self.version: dict = {}
+        self.pending_power: Optional[int] = None   # von Slider/Preset gesetzter Zielwert, erst per "Übernehmen" aktiv
 
     @property
     def presets(self) -> Dict[str, dict]:
@@ -52,6 +53,9 @@ class MinerCoordinator(DataUpdateCoordinator[Dict[str, Any]]):
         if not data["online"] and "config_error" not in data:
             data["stopped"] = True
         data["config"] = self._cfg
+        if (self.pending_power is not None and self._cfg
+                and self._cfg.get("power_limit") == self.pending_power and self._cfg.get("autotuning")):
+            self.pending_power = None   # Zielwert ist jetzt aktiv
         return data
 
     async def run_change(self, label: str, action: Callable[[], Awaitable[Any]]) -> Any:
@@ -79,3 +83,12 @@ class MinerCoordinator(DataUpdateCoordinator[Dict[str, Any]]):
             if p["power"] == cfg["power_limit"]:
                 return key
         return None
+
+    def pending_active(self) -> Optional[int]:
+        """Noch nicht übernommener Zielwert (None = nichts zu übernehmen)."""
+        if self.pending_power is None:
+            return None
+        cfg = (self.data or {}).get("config") or {}
+        if cfg.get("power_limit") == self.pending_power and cfg.get("autotuning"):
+            return None
+        return self.pending_power

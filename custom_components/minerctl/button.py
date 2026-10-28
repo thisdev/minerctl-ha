@@ -12,7 +12,46 @@ from .entity import ConfigEntity
 
 async def async_setup_entry(hass: HomeAssistant, entry: MinerConfigEntry, add: AddEntitiesCallback) -> None:
     co = entry.runtime_data
-    add([RestartButton(co), RestoreButton(co)])
+    add([ApplyButton(co), DiscardButton(co), RestartButton(co), RestoreButton(co)])
+
+
+class ApplyButton(ConfigEntity, ButtonEntity):
+    """Übernimmt den von Slider/Preset gesetzten Zielwert (löst den einen Neustart aus)."""
+    _attr_name = "Übernehmen"
+    _attr_icon = "mdi:check-bold"
+
+    def __init__(self, co) -> None:
+        super().__init__(co, "apply")
+
+    @property
+    def available(self) -> bool:
+        return super().available and self.coordinator.pending_active() is not None and not self.coordinator.busy
+
+    async def async_press(self) -> None:
+        target = self.coordinator.pending_active()
+        if target is None:
+            return
+        await self.coordinator.run_change(f"Leistung {target} W übernehmen",
+                                          lambda: self.coordinator.client.set_power(target))
+        self.coordinator.pending_power = None
+        self.coordinator.async_update_listeners()
+
+
+class DiscardButton(ConfigEntity, ButtonEntity):
+    """Verwirft den gesetzten Zielwert ohne Änderung am Miner (kein Neustart)."""
+    _attr_name = "Zielwert verwerfen"
+    _attr_icon = "mdi:undo"
+
+    def __init__(self, co) -> None:
+        super().__init__(co, "discard")
+
+    @property
+    def available(self) -> bool:
+        return super().available and self.coordinator.pending_active() is not None
+
+    async def async_press(self) -> None:
+        self.coordinator.pending_power = None
+        self.coordinator.async_update_listeners()
 
 
 class RestartButton(ConfigEntity, ButtonEntity):
