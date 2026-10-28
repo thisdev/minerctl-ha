@@ -24,20 +24,32 @@ Status über die Miner-API (Port 4028), Änderungen über SSH (Port 22).
 | Board 6/7/8 Hashrate, Chiptemperatur | Sensor | je Board |
 | Leistung | Sensor | geschätzter Verbrauch laut Miner (ohne Netzteilverluste) |
 | Effizienz | Sensor | J/TH |
+| Akzeptierte / Abgelehnte Shares | Sensor | Zähler, mit Verlaufsgrafik |
+| Ablehnquote | Sensor | Anteil abgelehnter Shares (%) |
+| Hardware-Fehler | Sensor | HW-Fehler des Miners |
+| Best Share | Sensor | höchste je erreichte Share-Difficulty |
+| Letzter Share | Sensor | Zeitpunkt des letzten akzeptierten Shares |
+| Laufzeit | Sensor | seit letztem bosminer-Start |
+| Gefundene Blöcke | Sensor | beim Pool-Mining praktisch immer 0 |
+| Hashrate 24h | Sensor | 24-h-Durchschnitt (für Ertragsschätzung) |
 | Leistungsgrenze | Schieberegler | Ziel-Watt setzen (noch ohne Neustart); Grenzen passen sich automatisch an die Zahl laufender Boards an (~130–470 W je Board) |
+| Zieltemperatur | Schieberegler | Autotuning-Zieltemperatur setzen (60–95 °C, noch ohne Neustart) |
 | Preset | Auswahl | Eco, Medium, Maximum – setzt den Ziel-Watt-Wert (noch ohne Neustart) |
-| Übernehmen | Taste | wendet den gesetzten Zielwert an – löst den einen Neustart aus |
+| Übernehmen | Taste | wendet gesetzte Zielwerte (Leistung und/oder Zieltemperatur) an – löst den einen Neustart aus |
 | Zielwert verwerfen | Taste | verwirft den Zielwert ohne Änderung am Miner (kein Neustart) |
 | Mining | Schalter | bosminer stoppen/starten |
 | Mining neu starten | Taste | bosminer neu starten |
 | Original-Config wiederherstellen | Taste | standardmäßig deaktiviert |
 
-Diagnose: Lüfter, Board-Temperatur, Pool, aktive Leistungsgrenze (inkl. Drosselung durch Dynamic Power Scaling).
+Diagnose (standardmäßig unter „Diagnose", für Dashboards frei verwendbar): Lüfter, Board-Temperatur,
+Pool (mit Worker), aktive Leistungsgrenze (inkl. Drosselung durch Dynamic Power Scaling), Hot-/Gefahr-
+Temperatur, Stale-/Difficulty-Werte, HW-Fehlerquote, Netzwerk-Blöcke, Shares/min, Work Utility, Getworks,
+Local Work, Total MH, Hashrate 1m/5m/15m u. a. So kann jede/r auf dem Dashboard zeigen, was gewünscht ist.
 
-**Änderungen übernehmen:** Slider und Preset setzen nur einen **Zielwert** – der Miner läuft unverändert
-weiter. Erst **„Übernehmen"** schreibt die Änderung und startet bosminer einmal neu. So lösen ein
-Verrutschen am Slider oder ein Fehlklick keinen unnötigen Neustart aus; **„Zielwert verwerfen"** setzt
-den Zielwert ohne Änderung zurück.
+**Änderungen übernehmen:** Die Regler (Leistung, Zieltemperatur) und das Preset setzen nur **Zielwerte** –
+der Miner läuft unverändert weiter. Erst **„Übernehmen"** schreibt sie (Leistung und Zieltemperatur in
+einem Neustart). So löst ein Verrutschen am Slider oder ein Fehlklick keinen unnötigen Neustart aus;
+**„Zielwert verwerfen"** setzt die Zielwerte ohne Änderung zurück.
 
 ## Modi (Presets)
 Reine Leistungsstufen – Autotuning bleibt immer an, alle Boards laufen (siehe „Boards abschalten").

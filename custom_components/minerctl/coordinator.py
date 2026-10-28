@@ -30,6 +30,7 @@ class MinerCoordinator(DataUpdateCoordinator[Dict[str, Any]]):
         self._cfg_time = 0.0
         self.version: dict = {}
         self.pending_power: Optional[int] = None   # von Slider/Preset gesetzter Zielwert, erst per "Übernehmen" aktiv
+        self.pending_temp: Optional[float] = None  # gesetzte Zieltemperatur, erst per "Übernehmen" aktiv
 
     @property
     def presets(self) -> Dict[str, dict]:
@@ -55,7 +56,9 @@ class MinerCoordinator(DataUpdateCoordinator[Dict[str, Any]]):
         data["config"] = self._cfg
         if (self.pending_power is not None and self._cfg
                 and self._cfg.get("power_limit") == self.pending_power and self._cfg.get("autotuning")):
-            self.pending_power = None   # Zielwert ist jetzt aktiv
+            self.pending_power = None   # Leistungs-Zielwert ist jetzt aktiv
+        if self.pending_temp is not None and self._cfg and self._cfg.get("temp_target") == self.pending_temp:
+            self.pending_temp = None    # Temperatur-Zielwert ist jetzt aktiv
         return data
 
     async def run_change(self, label: str, action: Callable[[], Awaitable[Any]]) -> Any:
@@ -84,11 +87,17 @@ class MinerCoordinator(DataUpdateCoordinator[Dict[str, Any]]):
                 return key
         return None
 
-    def pending_active(self) -> Optional[int]:
-        """Noch nicht übernommener Zielwert (None = nichts zu übernehmen)."""
-        if self.pending_power is None:
-            return None
+    def pending_changes(self) -> Dict[str, Any]:
+        """Noch nicht übernommene Zielwerte (leer = nichts zu übernehmen)."""
         cfg = (self.data or {}).get("config") or {}
-        if cfg.get("power_limit") == self.pending_power and cfg.get("autotuning"):
-            return None
-        return self.pending_power
+        out: Dict[str, Any] = {}
+        if (self.pending_power is not None
+                and not (cfg.get("power_limit") == self.pending_power and cfg.get("autotuning"))):
+            out["power"] = self.pending_power
+        if self.pending_temp is not None and cfg.get("temp_target") != self.pending_temp:
+            out["temp_target"] = self.pending_temp
+        return out
+
+    def clear_pending(self) -> None:
+        self.pending_power = None
+        self.pending_temp = None

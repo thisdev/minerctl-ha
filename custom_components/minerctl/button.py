@@ -25,15 +25,20 @@ class ApplyButton(ConfigEntity, ButtonEntity):
 
     @property
     def available(self) -> bool:
-        return super().available and self.coordinator.pending_active() is not None and not self.coordinator.busy
+        return super().available and bool(self.coordinator.pending_changes()) and not self.coordinator.busy
 
     async def async_press(self) -> None:
-        target = self.coordinator.pending_active()
-        if target is None:
+        changes = self.coordinator.pending_changes()
+        if not changes:
             return
-        await self.coordinator.run_change(f"Leistung {target} W übernehmen",
-                                          lambda: self.coordinator.client.set_power(target))
-        self.coordinator.pending_power = None
+        parts = []
+        if "power" in changes:
+            parts.append(f"{changes['power']} W")
+        if "temp_target" in changes:
+            parts.append(f"{changes['temp_target']} °C")
+        await self.coordinator.run_change("Übernehmen: " + ", ".join(parts),
+                                          lambda: self.coordinator.client.apply_changes(**changes))
+        self.coordinator.clear_pending()
         self.coordinator.async_update_listeners()
 
 
@@ -47,10 +52,10 @@ class DiscardButton(ConfigEntity, ButtonEntity):
 
     @property
     def available(self) -> bool:
-        return super().available and self.coordinator.pending_active() is not None
+        return super().available and bool(self.coordinator.pending_changes())
 
     async def async_press(self) -> None:
-        self.coordinator.pending_power = None
+        self.coordinator.clear_pending()
         self.coordinator.async_update_listeners()
 
 

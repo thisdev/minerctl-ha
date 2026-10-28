@@ -101,7 +101,7 @@ class BosMiner:
             data["api_error"] = str(err)
             return data
         s = summary[0]
-        data.update(online=True, hash_5s=_ths(s, "5s"), hash_av=_ths(s, "av"))
+        data.update(online=True, hash_5s=_ths(s, "5s"), hash_av=_ths(s, "av"), summary=s)
         for cmd, key in (("devs", "DEVS"), ("temps", "TEMPS"), ("fans", "FANS"),
                          ("tunerstatus", "TUNERSTATUS"), ("pools", "POOLS")):
             try:
@@ -173,9 +173,13 @@ class BosMiner:
         secs = T.sections(text)
         key, watts, tuning = T.power_settings(secs)
         fmt = secs.get("format", {})
+        tc = secs.get("temp_control", {})
         return {"power_key": key, "power_limit": watts, "autotuning": tuning,
                 "chains": T.chain_settings(secs), "model": T.value(fmt.get("model")),
-                "format": T.value(fmt.get("version"))}
+                "format": T.value(fmt.get("version")),
+                "temp_target": T.value(tc.get("target_temp")),
+                "temp_hot": T.value(tc.get("hot_temp")),
+                "temp_dangerous": T.value(tc.get("dangerous_temp"))}
 
     async def _wait_for_api(self) -> bool:
         deadline = time.monotonic() + self.restart_timeout
@@ -212,6 +216,18 @@ class BosMiner:
     async def set_power(self, watts: int) -> None:
         async with self.change_lock:
             await self.apply_conf(T.with_power(await self.read_conf(), watts))
+
+    async def apply_changes(self, power: Optional[int] = None, temp_target: Optional[float] = None) -> None:
+        """Leistung und/oder Zieltemperatur in einem Schritt setzen (ein Neustart)."""
+        async with self.change_lock:
+            text = await self.read_conf()
+            new = text
+            if power is not None:
+                new = T.with_power(new, power)
+            if temp_target is not None:
+                new = T.set_key(new, "temp_control", "target_temp", f"{float(temp_target):.1f}")
+            if new != text:
+                await self.apply_conf(new)
 
     async def set_boards(self, changes: Dict[int, bool]) -> None:
         async with self.change_lock:
