@@ -67,3 +67,10 @@ abzuschalten? Bitte ein [Issue oder einen Pull Request](https://github.com/thisd
 - Vor jeder Änderung wird `/etc/bosminer.toml.bak` angelegt, vor der ersten zusätzlich `/etc/bosminer.toml.minerctl-orig`.
 - Startet bosminer mit einer Änderung nicht, wird die vorherige Config automatisch wiederhergestellt.
 - Der SSH-Host-Key wird nicht geprüft (gedacht für das eigene Heimnetz).
+
+## Haftungsausschluss
+**Nutzung auf eigene Gefahr.** Diese Integration ändert die Miner-Konfiguration und startet bosminer neu.
+Es wird **keine Haftung** übernommen – weder für Schäden an Hardware (Hashboards, Netzteil, Miner),
+noch für Datenverlust, entgangene Erträge, erhöhte Stromkosten oder sonstige Folgeschäden. Du bist
+selbst dafür verantwortlich, Kühlung, Temperaturen und Leistungsgrenzen im sicheren Bereich zu halten.
+Kein offizielles Projekt von Braiins oder Bitmain. Bereitstellung „wie besehen" ohne jede Gewährleistung.
