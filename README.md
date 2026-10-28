@@ -49,12 +49,13 @@ Reine Leistungsstufen – Autotuning bleibt immer an, alle Boards laufen (siehe 
 | Medium | 700 W |
 | Maximum | 1420 W |
 
-Nutzbarer Bereich mit 3 Boards ca. **400–1420 W**. Darunter erreicht der Tuner die Vorgabe nicht
-(Floor ~380 W), deutlich höhere Werte bringen kaum mehr Hashrate.
+Mit 3 Boards liegt der mögliche Bereich bei ca. **400–1420 W**; unterhalb ~380 W erreicht der Tuner die
+Vorgabe nicht.
 
-Der Leistungs-Schieberegler erkennt automatisch die Zahl laufender Boards und passt seine Grenzen an
-(~130–470 W je Board). Zu hohe Werte sind ungefährlich: Das Autotuning fährt ein Board nie über seinen
-sicheren Punkt – ein unerreichbarer Zielwert läuft einfach am Board-Maximum.
+Der Leistungs-Schieberegler erkennt automatisch die Zahl laufender Boards und skaliert seine Grenzen
+(~130–470 W je Board). Diese Grenzen sind nur **mögliche Werte** – was du tatsächlich einstellst,
+entscheidest und verantwortest du selbst. Einen Zielwert oberhalb dessen, was die vorhandenen Boards
+leisten, erreicht das Autotuning nicht.
 
 ## Boards abschalten (softwareseitig nicht möglich)
 Auf dem getesteten S9 (Braiins OS / BOSer 0.1.0) wirkt das Abschalten einzelner Hashboards per
