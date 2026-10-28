@@ -1,0 +1,12 @@
+{
+  "domain": "minerctl",
+  "name": "minerctl (Braiins OS Miner)",
+  "codeowners": ["@thisdev"],
+  "config_flow": true,
+  "documentation": "https://github.com/thisdev/minerctl-ha",
+  "issue_tracker": "https://github.com/thisdev/minerctl-ha/issues",
+  "iot_class": "local_polling",
+  "integration_type": "device",
+  "requirements": ["asyncssh>=2.14.0"],
+  "version": "0.1.0"
+}

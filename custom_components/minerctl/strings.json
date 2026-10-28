@@ -1,0 +1,44 @@
+{
+  "config": {
+    "step": {
+      "user": {
+        "title": "Connect miner",
+        "description": "Antminer running Braiins OS. Control uses SSH (port 22), status uses the API (port 4028). Braiins OS usually has no root password – leave it empty then.{error}",
+        "data": {
+          "host": "IP address",
+          "name": "Name",
+          "username": "SSH user",
+          "password": "SSH password (optional)"
+        }
+      }
+    },
+    "error": {
+      "cannot_connect": "Connection failed. Check IP, SSH access and network."
+    },
+    "abort": {
+      "already_configured": "This miner is already configured."
+    }
+  },
+  "options": {
+    "step": {
+      "init": {
+        "title": "minerctl options",
+        "description": "Boards as numbers, on the S9: 6, 7, 8 (comma separated). Power in watts (100–1800). Autotuning always stays on.",
+        "data": {
+          "scan_interval": "Polling interval (seconds)",
+          "min_boards": "Minimum – boards",
+          "min_power": "Minimum – power (W)",
+          "min2_boards": "Minimum 2 – boards",
+          "min2_power": "Minimum 2 – power (W)",
+          "medium_boards": "Medium – boards",
+          "medium_power": "Medium – power (W)",
+          "max_boards": "Maximum – boards",
+          "max_power": "Maximum – power (W)"
+        }
+      }
+    },
+    "error": {
+      "invalid_boards": "Invalid board numbers (S9: 6, 7, 8)."
+    }
+  }
+}
