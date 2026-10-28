@@ -147,6 +147,5 @@ class StateSensor(MinerEntity, SensorEntity):
             "änderung": self.coordinator.busy,
             "letzter_fehler": self.coordinator.last_error,
             "preset": self.coordinator.current_preset(),
-            "aktive_boards": [c for c, on in (cfg.get("chains") or {}).items() if on],
             "autotuning": cfg.get("autotuning"),
         }

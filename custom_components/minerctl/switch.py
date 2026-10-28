@@ -1,4 +1,4 @@
-"""Schalter: Mining an/aus und einzelne Hashboards."""
+"""Schalter: Mining an/aus. (Board-Schalter: siehe Hinweis unten.)"""
 from __future__ import annotations
 
 from homeassistant.components.switch import SwitchEntity
@@ -11,8 +11,10 @@ from .entity import ConfigEntity
 
 async def async_setup_entry(hass: HomeAssistant, entry: MinerConfigEntry, add: AddEntitiesCallback) -> None:
     co = entry.runtime_data
-    chains = ((co.data or {}).get("config") or {}).get("chains", {6: True, 7: True, 8: True})
-    add([MiningSwitch(co)] + [BoardSwitch(co, cid) for cid in sorted(chains)])
+    # Einzel-Board-Schalter (BoardSwitch) werden bewusst NICHT angelegt: Abschalten per
+    # [hash_chain.N] enabled = false wirkt auf dem S9 nicht (verifiziert, siehe README).
+    # Klasse bleibt für spätere Firmware/Modelle erhalten, falls es dort doch greift.
+    add([MiningSwitch(co)])
 
 
 class MiningSwitch(ConfigEntity, SwitchEntity):

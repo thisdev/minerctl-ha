@@ -19,29 +19,44 @@ Status über die Miner-API (Port 4028), Änderungen über SSH (Port 22).
 
 | Entität | Typ | Funktion |
 |---|---|---|
-| Zustand | Sensor | läuft / gestoppt / änderung / nicht erreichbar, Attribute: Preset, aktive Boards, letzter Fehler |
+| Zustand | Sensor | läuft / gestoppt / änderung / nicht erreichbar, Attribute: Preset, letzter Fehler |
 | Hashrate, Hashrate Durchschnitt | Sensor | TH/s gesamt |
 | Board 6/7/8 Hashrate, Chiptemperatur | Sensor | je Board |
 | Leistung | Sensor | geschätzter Verbrauch laut Miner (ohne Netzteilverluste) |
 | Effizienz | Sensor | J/TH |
 | Leistungsgrenze | Zahl | 100–1800 W setzen |
-| Preset | Auswahl | Minimum, Minimum 2, Medium, Maximum |
+| Preset | Auswahl | Eco, Medium, Maximum (reine Leistungsstufen) |
 | Mining | Schalter | bosminer stoppen/starten |
-| Board 6/7/8 | Schalter | einzelne Boards an/aus (mindestens eins bleibt an) |
 | Mining neu starten | Taste | bosminer neu starten |
 | Original-Config wiederherstellen | Taste | standardmäßig deaktiviert |
 
 Diagnose: Lüfter, Board-Temperatur, Pool, aktive Leistungsgrenze (inkl. Drosselung durch Dynamic Power Scaling).
 
-## Presets anpassen
-*Gerät → Integration „minerctl“ → Konfigurieren*: Boards (z. B. `6, 8`) und Watt je Preset, Abfrageintervall.
+## Modi (Presets)
+Reine Leistungsstufen – Autotuning bleibt immer an, alle Boards laufen (siehe „Boards abschalten").
+*Gerät → Integration „minerctl“ → Konfigurieren*: Watt je Modus und Abfrageintervall.
 
-| Preset | Boards | Leistung |
-|---|---|---|
-| Minimum | 7 | 150 W |
-| Minimum 2 | 7 | 200 W |
-| Medium | 6, 8 | 700 W |
-| Maximum | 6, 7, 8 | 1420 W |
+| Modus | Leistung |
+|---|---|
+| Eco | 400 W |
+| Medium | 700 W |
+| Maximum | 1420 W |
+
+Nutzbarer Bereich mit 3 Boards ca. **400–1420 W**. Darunter erreicht der Tuner die Vorgabe nicht
+(Floor ~380 W), deutlich höhere Werte bringen kaum mehr Hashrate.
+
+## Boards abschalten (softwareseitig nicht möglich)
+Auf dem getesteten S9 (Braiins OS / BOSer 0.1.0) wirkt das Abschalten einzelner Hashboards per
+`[hash_chain.N] enabled = false` **nicht** – alle Boards hashen weiter (bestätigt per Kaltstart,
+bosminer-Neustart und Braiins-Weboberfläche). Deshalb gibt es in HA **keine** Board-Schalter; gesteuert
+wird nur die Leistung. Der Code dafür bleibt für andere Firmware/Modelle erhalten.
+
+**Workaround für weniger Boards:** einzelne Hashboards **direkt am Miner physisch abstecken**
+(Gerät vorher stromlos machen). Das ist aktuell der einzige verlässliche Weg zu 1- oder 2-Board-Betrieb.
+
+**Mithelfen:** Du kennst einen funktionierenden Weg, Boards auf dieser BOS-Version per Software
+abzuschalten? Bitte ein [Issue oder einen Pull Request](https://github.com/thisdev/minerctl-ha/issues)
+öffnen oder melden – danke!
 
 ## Wichtig
 - Jede Änderung startet bosminer neu (beim S9 ca. 30–60 s ohne Hashrate). Automationen daher mit Hysterese bauen.

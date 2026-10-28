@@ -230,20 +230,16 @@ class BosMiner:
                 await self.apply_conf(new)
 
     async def apply_preset(self, preset: dict) -> bool:
-        """Boards und Leistung in einem Schritt (ein Neustart). False = war bereits aktiv."""
+        """Leistung setzen (ein Neustart). False = war bereits aktiv.
+
+        Nur noch Leistung: Board-Auswahl entfällt, weil Abschalten per hash_chain auf dem S9
+        nicht wirkt. set_boards() bleibt für spätere Versuche erhalten, wird aber nicht genutzt.
+        """
         if not preset.get("power"):
             raise MinerError("Preset ohne Leistungswert – Autotuning wird nie abgeschaltet")
         async with self.change_lock:
             text = await self.read_conf()
-            chains = T.chain_settings(T.sections(text))
-            wanted = {int(b) for b in preset["boards"]}
-            if not wanted or wanted - set(chains):
-                raise MinerError(f"Ungültige Boards im Preset: {sorted(wanted)}")
-            new = text
-            for cid, enabled in chains.items():
-                if enabled != (cid in wanted):
-                    new = T.set_key(new, f"hash_chain.{cid}", "enabled", "true" if cid in wanted else "false")
-            new = T.with_power(new, preset["power"])
+            new = T.with_power(text, preset["power"])
             if new == text:
                 return False
             await self.apply_conf(new)

@@ -23,22 +23,14 @@
     "step": {
       "init": {
         "title": "minerctl Optionen",
-        "description": "Boards als Nummern, beim S9: 6, 7, 8 (mehrere mit Komma). Leistung in Watt (100–1800). Autotuning bleibt immer an.",
+        "description": "Leistung je Modus in Watt (mit 3 Boards ca. 400–1420; darunter greift der Tuner-Floor). Boards lassen sich auf diesem S9 nicht per Software abschalten – alle Boards laufen immer.",
         "data": {
           "scan_interval": "Abfrageintervall (Sekunden)",
-          "min_boards": "Minimum – Boards",
-          "min_power": "Minimum – Leistung (W)",
-          "min2_boards": "Minimum 2 – Boards",
-          "min2_power": "Minimum 2 – Leistung (W)",
-          "medium_boards": "Medium – Boards",
+          "eco_power": "Eco – Leistung (W)",
           "medium_power": "Medium – Leistung (W)",
-          "max_boards": "Maximum – Boards",
           "max_power": "Maximum – Leistung (W)"
         }
       }
-    },
-    "error": {
-      "invalid_boards": "Ungültige Board-Nummern (beim S9: 6, 7, 8)."
     }
   }
 }

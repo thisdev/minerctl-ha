@@ -32,8 +32,7 @@ class PresetSelect(ConfigEntity, SelectEntity):
 
     @property
     def extra_state_attributes(self):
-        return {p["label"]: f"Boards {', '.join(map(str, p['boards']))} · {p['power']} W"
-                for p in self.coordinator.presets.values()}
+        return {p["label"]: f"{p['power']} W" for p in self.coordinator.presets.values()}
 
     async def async_select_option(self, option: str) -> None:
         if option == CUSTOM:

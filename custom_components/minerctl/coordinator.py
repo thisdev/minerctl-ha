@@ -73,10 +73,9 @@ class MinerCoordinator(DataUpdateCoordinator[Dict[str, Any]]):
 
     def current_preset(self) -> Optional[str]:
         cfg = (self.data or {}).get("config")
-        if not cfg:
+        if not cfg or not cfg.get("autotuning"):
             return None
-        active = {c for c, on in cfg["chains"].items() if on}
         for key, p in self.presets.items():
-            if set(p["boards"]) == active and p["power"] == cfg["power_limit"] and cfg["autotuning"]:
+            if p["power"] == cfg["power_limit"]:
                 return key
         return None

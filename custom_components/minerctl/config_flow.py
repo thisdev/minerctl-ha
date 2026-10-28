@@ -1,7 +1,6 @@
 """Einrichtung über die Oberfläche: IP, SSH-Zugang; Optionen: Abfrageintervall und Presets."""
 from __future__ import annotations
 
-import re
 from typing import Any
 
 import voluptuous as vol
@@ -54,36 +53,17 @@ class MinerctlConfigFlow(ConfigFlow, domain=DOMAIN):
         return MinerctlOptionsFlow()
 
 
-def _parse_boards(text: str) -> list[int] | None:
-    try:
-        boards = sorted({int(x) for x in re.split(r"[,\s]+", text.strip()) if x})
-    except ValueError:
-        return None
-    return boards or None
-
-
 class MinerctlOptionsFlow(OptionsFlow):
     async def async_step_init(self, user_input: dict[str, Any] | None = None) -> ConfigFlowResult:
         current = {k: dict(v) for k, v in DEFAULT_PRESETS.items()}
         for k, v in (self.config_entry.options.get("presets") or {}).items():
             if k in current:
                 current[k].update(v)
-        chains = set()
-        coordinator = getattr(self.config_entry, "runtime_data", None)
-        if coordinator and coordinator.data and coordinator.data.get("config"):
-            chains = set(coordinator.data["config"]["chains"])
 
-        errors: dict[str, str] = {}
         if user_input is not None:
-            presets = {}
-            for key in current:
-                boards = _parse_boards(user_input[f"{key}_boards"])
-                if not boards or (chains and set(boards) - chains):
-                    errors[f"{key}_boards"] = "invalid_boards"
-                presets[key] = {"boards": boards or [], "power": int(user_input[f"{key}_power"])}
-            if not errors:
-                return self.async_create_entry(data={
-                    CONF_SCAN_INTERVAL: int(user_input[CONF_SCAN_INTERVAL]), "presets": presets})
+            presets = {key: {"power": int(user_input[f"{key}_power"])} for key in current}
+            return self.async_create_entry(data={
+                CONF_SCAN_INTERVAL: int(user_input[CONF_SCAN_INTERVAL]), "presets": presets})
 
         fields: dict[Any, Any] = {
             vol.Required(CONF_SCAN_INTERVAL,
@@ -91,7 +71,6 @@ class MinerctlOptionsFlow(OptionsFlow):
                 vol.All(vol.Coerce(int), vol.Range(min=5, max=600)),
         }
         for key, p in current.items():
-            fields[vol.Required(f"{key}_boards", default=", ".join(map(str, p["boards"])))] = str
             fields[vol.Required(f"{key}_power", default=p["power"])] = vol.All(
                 vol.Coerce(int), vol.Range(min=POWER_MIN, max=POWER_MAX))
-        return self.async_show_form(step_id="init", data_schema=vol.Schema(fields), errors=errors)
+        return self.async_show_form(step_id="init", data_schema=vol.Schema(fields))
