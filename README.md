@@ -1,16 +1,11 @@
 # minerctl für Home Assistant
 
 Steuert einen Antminer S9 (und andere Antminer) mit **Braiins OS** direkt aus Home Assistant.
-Status über die Miner-API (Port 4028), Änderungen über SSH (Port 22). Autotuning bleibt immer an.
+Status über die Miner-API (Port 4028), Änderungen über SSH (Port 22).
 
 ## Installation
 
-**Variante A – manuell (ohne GitHub):**
-1. In Home Assistant das Add-on *Samba share* oder *Studio Code Server* installieren.
-2. Den Ordner `custom_components/minerctl` nach `/config/custom_components/minerctl` kopieren.
-3. Home Assistant neu starten (*Einstellungen → System → Neu starten*).
-
-**Variante B – HACS (empfohlen):**
+**Installation über HACS:**
 1. HACS → oben rechts *⋮* → *Benutzerdefinierte Repositories*.
 2. Repository `https://github.com/thisdev/minerctl-ha`, Typ *Integration*, hinzufügen.
 3. „minerctl" suchen, *Herunterladen*, danach Home Assistant neu starten.
