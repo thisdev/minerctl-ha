@@ -24,7 +24,7 @@ Status über die Miner-API (Port 4028), Änderungen über SSH (Port 22).
 | Board 6/7/8 Hashrate, Chiptemperatur | Sensor | je Board |
 | Leistung | Sensor | geschätzter Verbrauch laut Miner (ohne Netzteilverluste) |
 | Effizienz | Sensor | J/TH |
-| Leistungsgrenze | Zahl | 100–1800 W setzen |
+| Leistungsgrenze | Schieberegler | Watt setzen; Grenzen passen sich automatisch an die Zahl laufender Boards an (~130–470 W je Board) |
 | Preset | Auswahl | Eco, Medium, Maximum (reine Leistungsstufen) |
 | Mining | Schalter | bosminer stoppen/starten |
 | Mining neu starten | Taste | bosminer neu starten |
@@ -44,6 +44,10 @@ Reine Leistungsstufen – Autotuning bleibt immer an, alle Boards laufen (siehe 
 
 Nutzbarer Bereich mit 3 Boards ca. **400–1420 W**. Darunter erreicht der Tuner die Vorgabe nicht
 (Floor ~380 W), deutlich höhere Werte bringen kaum mehr Hashrate.
+
+Der Leistungs-Schieberegler erkennt automatisch die Zahl laufender Boards und passt seine Grenzen an
+(~130–470 W je Board). Zu hohe Werte sind ungefährlich: Das Autotuning fährt ein Board nie über seinen
+sicheren Punkt – ein unerreichbarer Zielwert läuft einfach am Board-Maximum.
 
 ## Boards abschalten (softwareseitig nicht möglich)
 Auf dem getesteten S9 (Braiins OS / BOSer 0.1.0) wirkt das Abschalten einzelner Hashboards per
